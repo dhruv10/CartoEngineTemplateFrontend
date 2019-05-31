@@ -1,6 +1,9 @@
 <template>
   <div>
     <div style="border: 2px solid black;" id="map"></div>
+    <button class="as-btn"> Button </button>
+    <as-range-slider id="range-slider"></as-range-slider>
+
     <aside class="toolbox">
       <div class="box">
         <header>
@@ -23,9 +26,11 @@
 </template>
 
 <script>
-// import { defineCustomElements } from '@carto/airship-components/dist/loader';
+import '@carto/airship-style/dist/airship.css';
+// Import only core styles and tables
+import '@carto/airship-style/dist/core/core.css';
+import '@carto/airship-style/dist/table/table.css';
 
-// defineCustomElements(window);
 export default {
   mounted() {
      const map = new mapboxgl.Map({
@@ -59,6 +64,11 @@ export default {
     function hideLoader() {
       document.getElementById('loader').style.opacity = '0';
     }
+
+    //web-comonents
+      const slider = document.querySelector('#range-slider');
+      slider.addEventListener('change', event => console.log('New value:', event.detail));
+    
   }
 };
 </script>
