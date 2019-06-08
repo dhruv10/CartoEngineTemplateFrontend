@@ -1,81 +1,157 @@
 <template>
-  <div>
-    <div style="border: 2px solid black;" id="map"></div>
-    <button class="as-btn"> Button </button>
-    <as-range-slider id="range-slider"></as-range-slider>
+<div>
+  <body class="as-app-body">
+    <div class="as-app as-app--nav-left" style="height: 930px; width:100%;">
+      <header class="as-toolbar" style="width:90px">
+        <button @click="toggleDrawer()" class="as-toolbar__item as-toolbar__toggle">
+          <i class="as-icon as-icon-hamburger as-title as-m--0"></i>
+        </button>
+        <nav class="as-toolbar__actions">
+          <ul>
+            <li>
+              <div class="as-toolbar__item">
+                <img src="https://carto.com/developers/img/logo-carto.21197b2f.svg" alt="Logo">
+              </div>
+            </li>
 
-    <aside class="toolbox">
-      <div class="box">
-        <header>
-          <h1>Add layer</h1>
-        </header>
-        <section>
-          <p class="description open-sans">Add one CARTO layer to your map</p>
-        </section>
-        <footer class="js-footer"></footer>
-      </div>
-    </aside>
-    <div id="loader">
-      <div class="CDB-LoaderIcon CDB-LoaderIcon--big">
-        <svg class="CDB-LoaderIcon-spinner" viewBox="0 0 50 50">
-          <circle class="CDB-LoaderIcon-path" cx="25" cy="25" r="20" fill="none"></circle>
-        </svg>
+            <li>
+              <a href="#" class="as-toolbar__item">Link 1</a>
+            </li>
+            <li>
+              <a href="#" class="as-toolbar__item">Link 2</a>
+            </li>
+          </ul>
+        </nav>
+      </header>
+      <div class="as-content">
+        <aside class="as-sidebar as-sidebar--left as-bg--warning as-sidebar--xl">
+          <!-- as-container code starts here -->
+          <div class="as-container">
+            <section class="as-box as-box--border">
+              <h1 class="as-title">Container 1</h1>
+              <p class="as-body">
+                Use this container when you need to present fixed content. This content will occupy as
+                much vertical space as needed.
+              </p>
+            </section>
+            <section class="as-box as-box--border">
+              <h1 class="as-title">Container 1</h1>
+              <p class="as-body">
+                Use this container when you need to present fixed content. This content will occupy as
+                much vertical space as needed.
+              </p>
+            </section>
+            <section class="as-box">
+              <h1 class="as-title">Container 1</h1>
+              <p class="as-body">
+                Use this container when you need to present fixed content. This content will occupy as
+                much vertical space as needed.
+              </p>
+            </section>
+            <section class="as-box">
+              <h1 class="as-title">Container 1</h1>
+              <p class="as-body">
+                Use this container when you need to present fixed content. This content will occupy as
+                much vertical space as needed.
+              </p>
+            </section>
+            <section class="as-box">
+              <h1 class="as-title">Container 1</h1>
+              <p class="as-body">
+                Use this container when you need to present fixed content. This content will occupy as
+                much vertical space as needed.
+              </p>
+            </section>
+            <section class="as-box">
+              <h1 class="as-title">Container 1</h1>
+              <p class="as-body">
+                Use this container when you need to present fixed content. This content will occupy as
+                much vertical space as needed.
+              </p>
+            </section>
+            <section class="as-box">
+              <h1 class="as-title">Container 1</h1>
+              <p class="as-body">
+                Use this container when you need to present fixed content. This content will occupy as
+                much vertical space as needed.
+              </p>
+            </section>
+            <section class="as-box">
+              <h1 class="as-title">Container 1</h1>
+              <p class="as-body">
+                Use this container when you need to present fixed content. This content will occupy as
+                much vertical space as needed.
+              </p>
+            </section>
+            <section class="as-box">
+              <h1 class="as-title">Container 1</h1>
+              <p class="as-body">
+                Use this container when you need to present fixed content. This content will occupy as
+                much vertical space as needed.
+              </p>
+            </section>
+            <section class="as-box">
+              <h1 class="as-title">Container 1</h1>
+              <p class="as-body">
+                Use this container when you need to present fixed content. This content will occupy as
+                much vertical space as needed.
+              </p>
+            </section>
+            <section class="as-box">
+              <h1 class="as-title">Container 1</h1>
+              <p class="as-body">
+                Use this container when you need to present fixed content. This content will occupy as
+                much vertical space as needed.
+              </p>
+            </section>
+          </div>
+          <!-- as-container code ends here -->
+        </aside>
+        <main class="as-main as-bg--badge-blue">
+          <div class="as-map-area">
+            <div id="map"></div>
+            <div class="as-map-panels">
+              <div class="as-panel as-panel--top as-panel--right">
+                <div class="as-panel__element as-p--32 as-bg--warning">
+                  <p class="as-body">Panel 0</p>
+                </div>
+                <div class="as-panel__element as-p--32 as-bg--success">
+                  <p class="as-body">Panel 1</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <footer class="as-map-footer as-bg--complementary" style="height: 120px;">
+            <div class="as-box">
+              <p class="as-title">BOX 1</p>
+              <p class="as-body">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+              <p
+                class="as-body"
+              >Inventore possimus nam quam necessitatibus omnis, est sequi rem quibusdam molestiae.</p>
+            </div>
+            <div class="as-box">
+              <p class="as-title">BOX 2</p>
+              <p class="as-body">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+            </div>
+          </footer>
+        </main>
       </div>
     </div>
-  </div>
+  </body>
+</div>
 </template>
 
 <script>
-import '@carto/airship-style/dist/airship.css';
-// Import only core styles and tables
-import '@carto/airship-style/dist/core/core.css';
-import '@carto/airship-style/dist/table/table.css';
-
 export default {
-  mounted() {
-     const map = new mapboxgl.Map({
-      container: 'map',
-      style: carto.basemaps.voyager,
-      center: [0, 0],
-      zoom: 1,
-      scrollZoom: false
-    });
-
-    const nav = new mapboxgl.NavigationControl({
-      showCompass: false
-    });
-    map.addControl(nav, 'top-left');
-    map.addControl(new mapboxgl.FullscreenControl(), 'top-left');
-
-    // Define user
-    carto.setDefaultAuth({
-      username: 'cartovl',
-      apiKey: 'default_public'
-    });
-
-    // Define layer
-    const source = new carto.source.Dataset('populated_places');
-    const viz = new carto.Viz();
-    const layer = new carto.Layer('layer', source, viz);
-
-    layer.addTo(map, 'watername_ocean');
-    layer.on('loaded', hideLoader);
-
-    function hideLoader() {
-      document.getElementById('loader').style.opacity = '0';
+  name: "HelloWorld",
+  data() {},
+  methods: {
+    toggleDrawer() {
+      console.log("kamikaze");
     }
-
-    //web-comonents
-      const slider = document.querySelector('#range-slider');
-      slider.addEventListener('change', event => console.log('New value:', event.detail));
-    
   }
 };
 </script>
 
 <style>
-#map{
-  width: 80%;
-  height: 500px;
-}
 </style>
