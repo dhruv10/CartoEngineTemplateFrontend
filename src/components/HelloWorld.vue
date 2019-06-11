@@ -83,6 +83,14 @@
                 much vertical space as needed.
               </p>
             </section>
+            <section class="as-box as-box--border">
+              <h1 class="as-title">Category Data</h1>
+              <button @click="categoryData()">Category Data</button>
+              <p class="as-body">
+                Use this container when you need to present fixed content. This content will occupy as
+                much vertical space as needed.
+              </p>
+            </section>
           </div>
           <!-- as-container code ends here -->
         </aside>
@@ -91,16 +99,23 @@
             <div id="map"></div>
             <div class="as-map-panels">
               <div class="as-panel as-panel--top as-panel--right">
-                <div class="as-panel__element as-p--32 as-bg--warning">
-                  <p class="as-body">Panel 0</p>
+                <div class="as-panel__element as-p--32 as-bg--warning" style="width:300px;">
+                  <p class="as-body">Select Point Radius</p>
+                  <as-range-slider></as-range-slider>
+                  <!-- <as-range-slider min-value="25" max-value="75"></as-range-slider> -->
                 </div>
                 <div class="as-panel__element as-p--32 as-bg--success">
-                  <p class="as-body">Panel 1</p>
+                  <p class="as-body">Time Series | Widget</p>
+                  <as-switch checked></as-switch>
                 </div>
               </div>
             </div>
           </div>
-          <footer class="as-map-footer as-bg--complementary" style="height: 320px;">
+          <footer
+            class="as-map-footer as-bg--complementary"
+            style="height: 320px;"
+            v-if="bottomPanel"
+          >
             <div class="as-box">
               <as-time-series-widget
                 style="padding:20px;"
@@ -120,6 +135,14 @@
               ></as-histogram-widget>
             </div>
           </footer>
+          <footer class="as-map-footer as-bg--complementary" style="height: 320px;" v-else>
+            <div class="as-box">
+              <as-histogram-widget show-clear id="typeHist"></as-histogram-widget>
+            </div>
+            <div class="as-box">
+              <as-category-widget show-clear id="typeCat"></as-category-widget>
+            </div>
+          </footer>
         </main>
       </div>
     </div>
@@ -133,7 +156,14 @@ import carto from "@carto/carto-vl";
 export default {
   name: "HelloWorld",
   data() {
-    (map = {}), (source = {}), (viz = {}), (layer = {});
+    return {
+      map: {},
+      source: {},
+      viz: {},
+      layer: {},
+      radius: 2,
+      bottomPanel: true
+    };
   },
   mounted() {
     // Add basemap and set properties
@@ -161,11 +191,33 @@ export default {
     // Define source
     this.source = new carto.source.Dataset("populated_places");
 
-    // Define Viz object and custom style
+    // Define viz object
     this.viz = new carto.Viz(`
             color: purple
-            width: 5
+            width: 4
         `);
+    // switch
+    const switchone = document.querySelector("as-switch");
+    // switchone.checked = true;
+    switchone.addEventListener("change", event => {
+      console.log("Switch checked: ", event.detail);
+      this.bottomPanel = event.detail;
+      console.log("this.bottomPanel: ", this.bottomPanel);
+    });
+    //slider
+    const rangeSliderWidget = document.querySelector("as-range-slider");
+    rangeSliderWidget.minValue = 1;
+    rangeSliderWidget.maxValue = 10;
+    rangeSliderWidget.value = 2;
+    rangeSliderWidget.step = 1;
+    rangeSliderWidget.addEventListener("change", event => {
+      console.log("Silder value Changed:", event.detail[0]);
+      this.viz = new carto.Viz(`
+            color: red
+            width: ${event.detail[0]}
+        `);
+      this.layer.update(this.source, this.viz);
+    });
   },
   methods: {
     toggleDrawer() {
@@ -186,7 +238,7 @@ export default {
     },
     updateLayer() {
       this.viz = new carto.Viz(`
-            color: red
+            color: green
             width: 8
         `);
       this.layer.update(this.source, this.viz);
@@ -253,6 +305,48 @@ export default {
         totals: true
       });
       bridge.build();
+    },
+    categoryData() {
+      const map = new mapboxgl.Map({
+        container: "map",
+        style: carto.basemaps.darkmatter,
+        center: [-4.77, 37.88],
+        zoom: 3
+      });
+
+      carto.setDefaultAuth({
+        username: "roman-carto",
+        apiKey: "default_public"
+      });
+
+      const s = carto.expressions;
+
+      const source = new carto.source.Dataset("ne_10m_airports");
+      const viz = new carto.Viz(`
+          strokeWidth: 0
+          color: ramp($location, vivid)
+        `);
+
+      const vizLayer = new carto.Layer("layer", source, viz);
+
+      const airportLayer = new AsBridge.VLBridge({
+        carto: carto,
+        map: map,
+        layer: vizLayer,
+        source: source
+      });
+
+      airportLayer.histogram("#typeHist", "location", {
+        readOnly: false
+      });
+
+      airportLayer.category("#typeCat", "location", {
+        readOnly: false
+      });
+
+      airportLayer.build();
+
+      vizLayer.addTo(map, "watername_ocean");
     }
   }
 };
