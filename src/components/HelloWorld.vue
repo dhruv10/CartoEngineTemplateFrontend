@@ -29,9 +29,7 @@
           <div class="as-container">
             <section class="as-box as-box--border">
               <h1 class="as-title">Add Layer</h1>
-              <button @click="addLayer()">
-                Add Layer
-              </button>
+              <button @click="addLayer()">Add Layer</button>
               <p class="as-body">
                 Use this container when you need to present fixed content. This content will occupy as
                 much vertical space as needed.
@@ -39,9 +37,7 @@
             </section>
             <section class="as-box as-box--border">
               <h1 class="as-title">Hide Layer</h1>
-              <button @click="hideLayer()">
-                Hide Layer
-              </button>
+              <button @click="hideLayer()">Hide Layer</button>
               <p class="as-body">
                 Use this container when you need to present fixed content. This content will occupy as
                 much vertical space as needed.
@@ -49,9 +45,7 @@
             </section>
             <section class="as-box as-box--border">
               <h1 class="as-title">Show Layer</h1>
-              <button @click="showLayer()">
-                Show Layer
-              </button>
+              <button @click="showLayer()">Show Layer</button>
               <p class="as-body">
                 Use this container when you need to present fixed content. This content will occupy as
                 much vertical space as needed.
@@ -59,9 +53,7 @@
             </section>
             <section class="as-box as-box--border">
               <h1 class="as-title">Update Layer</h1>
-              <button @click="updateLayer()">
-                Update Layer
-              </button>
+              <button @click="updateLayer()">Update Layer</button>
               <p class="as-body">
                 Use this container when you need to present fixed content. This content will occupy as
                 much vertical space as needed.
@@ -69,9 +61,23 @@
             </section>
             <section class="as-box as-box--border">
               <h1 class="as-title">Remove Layer</h1>
-              <button @click="removeLayer()">
-                Remove Layer
-              </button>
+              <button @click="removeLayer()">Remove Layer</button>
+              <p class="as-body">
+                Use this container when you need to present fixed content. This content will occupy as
+                much vertical space as needed.
+              </p>
+            </section>
+            <section class="as-box as-box--border">
+              <h1 class="as-title">Polygon geoJSON Add layer</h1>
+              <button @click="addGeoJSONLayer()">Add layer</button>
+              <p class="as-body">
+                Use this container when you need to present fixed content. This content will occupy as
+                much vertical space as needed.
+              </p>
+            </section>
+            <section class="as-box as-box--border">
+              <h1 class="as-title">Time series</h1>
+              <button @click="timeSeriesData()">time series</button>
               <p class="as-body">
                 Use this container when you need to present fixed content. This content will occupy as
                 much vertical space as needed.
@@ -94,17 +100,24 @@
               </div>
             </div>
           </div>
-          <footer class="as-map-footer as-bg--complementary" style="height: 120px;">
+          <footer class="as-map-footer as-bg--complementary" style="height: 320px;">
             <div class="as-box">
-              <p class="as-title">BOX 1</p>
-              <p class="as-body">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-              <p
-                class="as-body"
-              >Inventore possimus nam quam necessitatibus omnis, est sequi rem quibusdam molestiae.</p>
+              <as-time-series-widget
+                style="padding:20px;"
+                animated
+                heading="Animation"
+                description="controls"
+                time-format="%Q"
+              ></as-time-series-widget>
             </div>
             <div class="as-box">
-              <p class="as-title">BOX 2</p>
-              <p class="as-body">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+              <as-histogram-widget
+                style="padding:20px;"
+                show-clear
+                id="year"
+                heading="Year"
+                description="in which building was registered"
+              ></as-histogram-widget>
             </div>
           </footer>
         </main>
@@ -115,15 +128,12 @@
 </template>
 
 <script>
-import carto from '@carto/carto-vl'
+import carto from "@carto/carto-vl";
 
 export default {
   name: "HelloWorld",
   data() {
-    map = {},
-    source = {},
-    viz = {},
-    layer = {}
+    (map = {}), (source = {}), (viz = {}), (layer = {});
   },
   mounted() {
     // Add basemap and set properties
@@ -133,6 +143,12 @@ export default {
       center: [0, 30],
       zoom: 2
     });
+
+    const nav = new mapboxgl.NavigationControl({
+      showCompass: false
+    });
+    this.map.addControl(nav, "top-left");
+    this.map.addControl(new mapboxgl.FullscreenControl(), "top-left");
 
     //** CARTO VL functionality begins here **//
 
@@ -156,11 +172,11 @@ export default {
       console.log("kamikaze");
     },
     addLayer() {
-    // Define map layer
-    this.layer = new carto.Layer("layer", this.source, this.viz);
+      // Define map layer
+      this.layer = new carto.Layer("layer", this.source, this.viz);
 
-    // Add map layer
-    this.layer.addTo(this.map);
+      // Add map layer
+      this.layer.addTo(this.map);
     },
     hideLayer() {
       this.layer.hide();
@@ -177,7 +193,67 @@ export default {
     },
     removeLayer() {
       this.layer.remove();
-    }   
+    },
+    addGeoJSONLayer() {
+      let self = this;
+      fetch("https://libs.cartocdn.com/carto-vl/assets/stations.geojson")
+        .then(response => response.json())
+        .then(function(data) {
+          const source = new carto.source.GeoJSON(data);
+          const viz = new carto.Viz();
+          const layer = new carto.Layer("layer", source, viz);
+
+          layer.addTo(self.map);
+        });
+    },
+    timeSeriesData() {
+      const map = new mapboxgl.Map({
+        container: "map",
+        style: carto.basemaps.darkmatter,
+        center: [-4.77, 37.88],
+        zoom: 12
+      });
+      carto.setDefaultAuth({
+        username: "roman-carto",
+        apiKey: "default_public"
+      });
+      const source = new carto.source.SQL(`
+          select * from cordoba_catastro_simple where year > 1900 and year < 2018
+        `);
+      const viz = new carto.Viz(`
+          strokeWidth: 0
+        `);
+
+      const vizLayer = new carto.Layer("layer", source, viz);
+      vizLayer.addTo(map, "watername_ocean");
+      const yearWidget = document.querySelector("#year");
+      yearWidget.axisFormatter = e => {
+        if (isNaN(e)) {
+          return "...";
+        }
+        return Math.round(e);
+      };
+      const bridge = new AsBridge.VLBridge({
+        carto: carto,
+        map: map,
+        layer: vizLayer,
+        source: source
+      });
+
+      const ts = bridge.timeSeries("as-time-series-widget", "year", {
+        buckets: 30,
+        readOnly: false,
+        totals: true,
+        duration: 20,
+        fade: [0.1, Number.MAX_SAFE_INTEGER]
+      });
+      bridge.histogram(yearWidget, "year", {
+        buckets: 30,
+        readOnly: false,
+        totals: true
+      });
+      bridge.build();
+    }
   }
 };
 </script>
